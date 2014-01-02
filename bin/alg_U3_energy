@@ -1,0 +1,250 @@
+#!/usr/bin/perl
+# RCS info
+# $Id: alg_U3_energy,v 1.4 2011/03/30 10:51:40 curro Exp $
+#
+# Program to extract ground state energy, or part, or the full spectrum of 
+# the U(3) algebraic (model or general) Hamiltonian 
+#
+# by Currix TM
+#
+use strict;
+use warnings;
+#
+use Getopt::Std;
+#
+# Switches:
+my %options;
+getopts("TSbBvhnGg:I:",\%options);
+#
+my $tridiagN = 5000; # for N > $tridiagN the tridiagonal subroutine is used.
+#
+#
+use File::Temp qw/ tempfile /;
+#
+(my $prgname) = $0 =~ m#.*/(.+$)#;
+#
+my $usemessage = <<"EOF";
+
+Usage: $prgname [-STvbB] Nval lval scale xi
+       $prgname [-STvbB] [-I nstates] Nval lval scale xi
+       $prgname [-STvG] Nval lval scale xi
+       $prgname [-SvbB] [-n] -g inputfile
+       $prgname -h
+
+
+  Options:
+    b : Birge Sponer plot output.
+    B : Birge Sponer plot output with energy dependence.
+    v : verbose output.
+    I : compute the energies for the first nstates (nstates > 2)
+    T : use the program version with tridiagonal matrix diagonalization
+    G : compute only the ground state energy
+    g : general Hamiltonian (supply name of the parameter file).
+    S : execute the statically linked program.
+    n : normalize energies or quantum number by N in the general Hamiltonian case.
+    h : help message.
+
+
+EOF
+##
+die "\nPerl script to calculate the either the ground state energy or 
+the full spectrum of a U(3) model or general Hamiltonian.
+
+In the model Hamiltonian case, the calculation can be limited to only a subset 
+of the eigenvalues (first nstates), and a program taking advantage of the 
+tridiagonal character of the matrix is provided (and default for N > $tridiagN).
+
+The output can be adapted to the drawing of Birge-Sponer plots.\n
+     by Currix TM\n$usemessage" if ($options{"h"});
+#
+#
+my ($Nval,$lval,$scale,$xi);
+my @output;
+#
+#
+my $program;
+my $nstates;
+$nstates = $options{"I"} if ($options{"I"});
+#
+# Reading arguments
+#
+unless ($options{"g"}) {
+#
+#
+    die "$usemessage" if ($#ARGV!=3);
+    ($Nval,$lval,$scale,$xi) = @ARGV;
+    print "\tNVal = $Nval\n\tLVal = $lval\n\tSCale: $scale\n\txi: $xi\n" if ($options{"v"});  
+#
+} else {
+    die "$usemessage" if ($#ARGV>=0);
+# Read Nval
+    open INPFILE,"<$options{\"g\"}" or die "Error opening input file. $!\n";
+    my $line = <INPFILE>; 
+    ($Nval) = $line =~ m!(\d+)!; 
+    close INPFILE;
+    print "\tNVal = $Nval\n" if ($options{"v"});
+}
+#
+#  Program definition
+#
+# General Hamiltonian case
+if ($options{"g"}) {
+    if ($options{"S"}) {
+        chomp($program = `which en_U3_gen_Tstat`);
+    } else {
+        chomp($program = `which en_U3_gen_T`);
+    }
+    unless ($program) {
+        my $deffile;
+        if ($options{"S"}) {
+            $deffile = "../../bin/en_U3_gen_Tstat";
+        } else {
+            $deffile = "../../bin/en_U3_gen_T";
+        }
+        if (-x $deffile) { 
+            $program = "../".$deffile;
+        } else {
+            die "no executable $deffile found.\n";
+        }
+    }
+} else {
+# Model Hamiltonian case
+# For N < $tridiagN use the symmetric matrix routine (less cpu time), unless -T option.
+    if ($options{"S"}) {
+      if ($options{"T"} || $options{"I"}) {
+        chomp($program = `which en_U3_mh_trid_stat`);
+      } else {
+        if ($Nval < $tridiagN) {
+          chomp($program = `which en_U3_mh_stat`);
+        } else {
+          chomp($program = `which en_U3_mh_trid_stat`);
+        }
+      }
+    } else {
+      if ($options{"T"} || $options{"I"}) {
+        chomp($program = `which en_U3_mh_trid`);
+      } else {
+        if ($Nval < $tridiagN) {
+          chomp($program = `which en_U3_mh`);
+        } else {
+          chomp($program = `which en_U3_mh_trid`);
+        }
+      }
+    }
+    unless ($program) {
+        my $deffile;
+        if ($options{"S"}) {
+          if ($options{"T"} || $options{"I"}) {
+            $deffile = "../../bin/en_U3_mh_trid_stat";
+          } else {
+            if ($Nval < $tridiagN) {
+              $deffile = "../../bin/en_U3_mh";
+            } else {
+              $deffile = "../../bin/en_U3_mh_trid";
+            }
+          }
+        }
+        if (-x $deffile) { 
+            $program = "../".$deffile;
+        } else {
+            die "no executable $deffile found.\n";
+        }
+    }
+}
+#
+print "Executable program: $program \n" if ($options{"v"});
+#
+# Running Program
+#
+unless ($options{"g"}) {
+  #
+  @output = &runprog($Nval,$lval,$scale,$xi);
+  #
+} else { 
+  #
+  @output = &runproggen($options{"g"});
+  #
+}
+#
+my $norm = 1;
+#
+#
+if ($options{"b"}) {
+#
+# B-S plot output
+#
+###################    print "0  $output[0] $output[0]\n";
+#
+    $norm=2/$Nval if ($options{"n"});
+#
+    foreach (1..$#output) {
+#
+#	print "\tProcessing $_-th energy $output[$_]\n" if ($options{"v"});
+	my $diff = $output[$_]-$output[$_-1];
+	my $indx = $_*$norm;
+	print "$indx  $diff\n";
+#
+    }
+} elsif ($options{"B"}) {
+#
+# B-S plot output as a function of energy
+#
+#
+    $norm=1/$Nval if ($options{"n"});
+####################    print " 0  $output[0]\n";
+#
+    foreach (1..$#output) {
+	my $diff = $output[$_]-$output[$_-1];
+	my $indx = $output[$_]*$norm;
+	print " $indx    $diff\n";  
+    }
+} else {
+#
+# Energy output
+#
+    $norm=2/$Nval if ($options{"n"});
+#
+####################    print " 0  $output[0]\n";
+#
+    foreach (0..$#output) {
+	chomp(my $diff = $output[$_]);
+	my $indx = $_*$norm;
+	print " $indx    $diff\n";  
+    }
+}
+#
+#
+
+#
+###################################################################
+#    SUBROUTINES
+###################################################################
+sub runprog {
+    my ($Nval,$lval,$scale,$xi) = @_;
+# Temporary input file
+    my ($fh, $name) = tempfile("currixXXXX", DIR => "");
+#
+#                       IOPTS
+    my $iopts = 2;
+    $iopts = 0 if ($options{"G"});
+    $iopts = $nstates if ($options{"I"});
+#
+    print $fh "$Nval\n$lval\n$iopts\n$scale\n$xi\n";
+    print "$Nval $lval $iopts $scale $xi\n" if ($options{"v"});
+#
+    my @output =  `$program < $name`;
+#
+    unlink($name) or die "Couldn't unlink $name : $!\n";
+#
+    @output;
+}
+######################################################################
+sub runproggen {
+    my $inputfile = shift(@_);
+    print "INPUT FILE NAME: $inputfile\n" if ($options{"v"});
+#
+    chomp(my @output =  `$program < $inputfile`);
+#
+    @output;
+}
+

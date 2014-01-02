@@ -1,0 +1,12 @@
+#
+## GENERAL INPUT
+#
+ &INP0 BENT=.F., DTFL='exp_FulminicH_Feb03.dat' / 
+ &INP1 N2=140, LMAX=5, VMAX=5, EMINL=.F. /
+
+#
+ &INP2 IPRINT=0 /
+
+
+
+

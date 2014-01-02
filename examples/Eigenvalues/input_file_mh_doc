@@ -1,0 +1,6 @@
+ 10		# N      INPUT FILE 
+ 0  		# l
+ 2  		# iopts
+ 1.0d0	 	# scale
+ 0.5d0		# xi
+ .FALSE.        # lsave

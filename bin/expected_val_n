@@ -1,0 +1,271 @@
+#!/usr/bin/perl
+#
+# perl program to calculate the normalized expected value of the U(2) casimir n
+# for a given eigenstate and a xi value interval or for all the eigenstates
+# given a xi value
+#
+# $Id: expected_val_n,v 1.12 2012/10/01 16:28:29 curro Exp $
+#
+#  by Currix TM.
+#
+use strict;
+use warnings;
+#
+use Getopt::Std;
+#
+# Switches:
+my %options;
+getopts("SNEvhng:e:",\%options);
+#
+#
+use File::Temp qw/ tempfile /;
+#
+# bin files path
+my ($binpathmh, $binpathgh);
+#
+(my $prgname) = $0 =~ m#.*/(.+$)#;
+#
+my $usemessage = <<"EOF";
+
+Usage: $prgname [-vhS] [-e progpath] -N Nval lval scale xi
+       $prgname [-vhS] [-e progpath] -E Nval lval scale xi
+       $prgname [-vhS] [-e progpath] Nval lval scale u ximin ximax xistep
+       $prgname [-vhS] [-e progpath] [-n] -g inputfile
+
+  Options:
+    N : expected value of n as a function of v (0, 1, 2, ... ) for all states
+    E : expected value of n as a function of energy 
+        normalized by N for all states
+    S : execute statically linked Fortran program
+    v : verbose output
+    h : help message
+    g : general Hamiltonian (supply name of the parameter file)
+    n : normalize energies by N in the general Hamiltonian case or 
+        or v by N if -N
+    e : provide the executable triat files
+
+EOF
+## 
+die "\n\tPerl script to calculate the normalized expected value of
+the U(2) casimir n for a given eigenstate u (g.s. -> u = 1) and a xi
+value interval, for all the eigenstates given a xi value, or for the
+eigenstates of a general Hamiltonian.
+\n\tThe expected value is normalized by the number of bosons N (<n>/N).\n\n by Currix TM\n$usemessage" if
+($options{"h"});
+#
+my ($Nval,$lval,$scale);
+my $xi;
+my ($u,$ximin,$ximax,$xistep);
+my @output;
+#
+#
+#
+my $program;
+if ($options{"e"}) {
+    $program = $options{"e"};
+} else {
+    if ($options{"g"}) {
+        if ($options{"S"}) {
+            chomp($program = `which avec_U3_gen_Tstat`);
+        } else {
+            chomp($program = `which avec_U3_gen_T`);
+        } 
+    } else {
+        if ($options{"S"}) {
+            chomp($program = `which avec_U3_mh_stat`);
+        } else {
+            chomp($program = `which avec_U3_mh`);
+        } 
+    }
+    unless ($program) {
+        my $deffile;
+        if ($options{"g"}) {
+            if ($options{"S"}) {
+                chomp($deffile = "../../bin/avec_U3_gen_Tstat");
+            } else {
+                chomp($deffile = "../../bin/avec_U3_gen_T");
+            } 
+        } else {
+            if ($options{"S"}) {
+                $deffile = "../../bin/avec_U3_mh_stat";
+            } else {
+                $deffile = "../../bin/avec_U3_mh";
+            }
+        }
+        if (-x $deffile) { 
+            $program = $deffile;
+        } else {
+            die "no executable $deffile found.\n";
+        }
+    }
+}
+print "Executable program: $program \n" if ($options{"v"});
+#
+#
+unless ($options{"g"}) {
+#
+    if ($options{"E"} || $options{"N"}) {
+        die "$usemessage" if ($#ARGV!=3);
+        ($Nval,$lval,$scale,$xi) = @ARGV;
+        print "\tNVal = $Nval\n\tLVal = $lval\n\tSCale: $scale \n\tXI: $xi\n\n" if ($options{"v"});  
+    } else {
+        die "$usemessage" if ($#ARGV!=6);
+        ($Nval,$lval,$scale,$u,$ximin,$ximax,$xistep) = @ARGV;
+        # Check if $u > 0
+        die "\n\tError. The u argument is less than or equal to zero.\n\t For more info execute $0 -h\n" if ($u<=0);
+        print "\tNVal = $Nval\n\tLVal = $lval\n\tSCale: $scale \n\tu: $u\n\n\tximin: $ximin\n\n\tximax: $ximax\n\n\txistep: $xistep\n\n" if ($options{"v"});  
+    }
+} else { 
+    die "$usemessage" if ($#ARGV>=0);
+# Read Nval
+    open INPFILE,"<$options{\"g\"}" or die "Error opening input file. $!\n";
+    my $line = <INPFILE>; 
+    ($Nval) = $line =~ m!(\d+)!; 
+    close INPFILE;
+    print "\tNVal = $Nval\n" if ($options{"v"});
+# Run program
+    @output = &runproggen($options{"g"});
+}
+#
+# Fixed xi value case
+#
+if ($options{"E"} || $options{"N"}) {
+#
+    @output = &runprog($Nval,$lval,$scale,$xi);
+#
+##    print "Program output:\n @output\n" if ($options{"v"});
+#
+    my $dim = shift(@output);
+    print "Dimension: $dim\n" if ($options{"v"});
+#
+    foreach (1..$dim) {
+	my $ener = shift(@output); # Take care with zero energy reference!!
+	my $expn = 0;
+	my $vval = $_- 1;
+	foreach (1..$dim) {
+	    my ($comp,$n,$l) = split ' ', shift(@output);
+###	    print "$comp, $n\n";
+	    $expn += $comp*$comp*$n;
+	};
+	$ener/=$Nval;
+	$expn/=$Nval;
+	$vval/=$Nval if  ($options{"n"});
+	print "$ener $expn\n" if ($options{"E"});
+	print "$vval $expn\n" if ($options{"N"});
+    }
+#
+# Reading parameters from file case
+#
+} elsif ($options{"g"}) { 
+#
+##    print "Program output:\n @output\n" if ($options{"v"});
+#
+# Extract Dimension
+    my $dim = 0;
+    foreach (0..$#output) {
+        my $line = shift(@output);
+        if ($line =~ /DIM =/) {
+            my @line = split /\s+/, $line;
+            $dim = $line[11];
+            print "Dimension: $dim\n" if ($options{"v"});
+            last;
+        }
+    }
+#
+    foreach (1..$dim) {
+	chomp(my $ener = shift(@output)); # Take care with zero energy reference!!
+        ($ener) = ($ener =~ /Energy =\s+(\d.*$)/);
+        print "Energy = $ener\n" if ($options{"v"});
+#
+        shift(@output); # Remove line Component U(2)  |  n ,  l  >   Component SO(3)    |  v ,  K  >
+#
+	my $expn = 0;
+	foreach (1..$dim) {
+	    my ($comp, $n, $l) = (split ' ', shift(@output))[0,3,5];
+####	    print "$comp, $n\n";
+	    $expn += $comp*$comp*$n;
+	};
+	$ener/=$Nval if ($options{"n"}); # normalize energy values
+	$expn/=$Nval;
+	print "$ener $expn\n";
+#
+        shift(@output); # Remove empty line
+#
+    }
+#
+} else {
+#
+    $xi = $ximin;
+#
+#
+    while (&ltequal($xi,$ximax,4)) {
+	print "\tXI = $xi\n" if ($options{"v"});
+#
+	@output = &runprog($Nval,$lval,$scale,$xi);
+#
+##    print "Program output:\n @output\n" if ($options{"v"});
+#
+	my $dim = shift(@output);
+	print "Dimension: $dim\n" if ($options{"v"});
+#     Eliminates states prior to the $u state
+	my $skipval=$dim*($u-1)+($u-1);
+	my @ustate=@output[$skipval..($skipval+$dim)];
+#
+	print "ustate: @ustate\n" if ($options{"v"});
+#
+	my $ener = shift(@ustate);
+	my $expn = 0;
+	print "ener :: $ener\n@ustate\n" if ($options{"v"});
+#
+	foreach (1..$dim) {
+	    my ($comp,$n,$l) = split ' ', shift(@ustate);
+	    $expn += $comp*$comp*$n;
+	};
+#
+	$expn/=$Nval;
+#
+	print "$xi $expn\n";
+	print "output :: $xi $expn\n"if ($options{"v"});
+#
+	$xi+=$xistep;
+    }
+}
+###################################################################
+#    SUBROUTINES
+###################################################################
+sub runprog {
+    my ($Nval,$lval,$scale,$xi) = @_;
+# Temporary input file
+    my ($fh, $name) = tempfile("currixXXXX", DIR => "");
+#
+#                       IOPTS
+    print $fh "$Nval\n$lval\n2\n$scale\n$xi\n.FALSE.\n"; # added lsave = .FALSE.
+    print "$Nval $lval 2 $scale $xi\n" if ($options{"v"});
+#
+    my @output =  `$program < $name`;
+#
+    unlink($name) or die "Couldn't unlink $name : $!\n";
+#
+    @output;
+}
+######################################################################
+sub runproggen {
+    my $inputfile = shift(@_);
+    print "INPUT FILE NAME: $inputfile\n" if ($options{"v"});
+#
+    my @output =  `$program < $inputfile`;
+#
+    @output;
+}
+######################### Perl Cookbook #########################            
+# equal(NUM1, NUM2, ACCURACY) : returns true if NUM1.le.NUM2
+# to ACCURACY number of decimal places
+
+sub ltequal {
+    my ($A, $B, $dp) = @_;
+#
+    return sprintf("%.${dp}g", $A) le sprintf("%.${dp}g", $B);
+}
+
+
+

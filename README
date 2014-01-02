@@ -1,0 +1,24 @@
+Suite of programs for the two-dimensional limit of the Vibron Model (2DVM)
+Includes Minuit minimization program for molecular bending modelling
+
+by Currix 
+
+The program user's guide can be found in the doc directory in pdf,
+html, and txt formats.
+
+Major upgrades
+2.0 23 Mar 2010
+2.1 12 Apr 2010
+2.2 06 Oct 2010
+
+Copyright (2010-) Francisco Perez-Bernal
+
+All Rights Reserved
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at
+your option) any later version.
+ 
+The full text of the GPL is given in /usr/share/common-licenses/GPL or
+in the FSF website http://www.gnu.org/copyleft/gpl.html.

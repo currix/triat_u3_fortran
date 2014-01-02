@@ -1,0 +1,89 @@
+Release notes for triat_u3_min 2.1 (notes compiled 2010/04/11)
+
+ v. 2.1.0
+
+ * Added test to check correct assignment of experimental levels 
+   in the linear case. (Mod(n,2) = Mod(l,2)).
+
+ * Added the possibility of predicting and comparing theoretical 
+   energies with experimental values which are not included in the
+   chi-2 calculation. 
+   To do so, the experimental energy error should be fixed to zero.
+
+ * Added program to compute general 1-2-3-4 body hamiltonian eigenvalues
+
+                   -------------------------------------
+ v. 2.2.0
+
+ * Added program to compute general 1-2-3-4 body hamiltonian
+   eigenvalues and eigenvectors and display components of
+   the eigenstates in the U(2) and SO(3) basis.
+
+ * The energies are displayed only once the fit has finished
+   (IFLAG.eq.3) unless iprint.gt.0.
+
+ * New version of the perl script launcher. More flexible with regard
+   to the executable program definition.
+
+ * Added programs to compute observables of interest in the 
+   bosonic U(3) algebraic model.
+
+   (1) expected_val_n :: 
+       expected value of the number of tau bosons
+
+   (2) intensity_IR :: 
+       squared expected value of the transition operator between
+       Hamiltonian eigenstates.
+
+
+
+                   -------------------------------------
+ v. 2.2.1
+
+   (1) Bug in minuit_U3_genH corrected. Default path of statically
+   compiled binary.
+
+   (2) Added option to compute the expected value of the number of 
+   tau bosons for the eigenstates of a given Hamiltonian and display the 
+   result as a function of the number of quanta, normalized by N or not.
+
+   (3) Added a perl script to produce the necessary output to build 
+   excitation energy diagrams.
+
+   (4) Added the source file of minuit not to require the cernlib
+   package (absent in squeeze). Now the compilation can be done
+   without reference to the minuit libraries.
+
+   (5) Added default rules for f90 files in makefile. 
+
+   (6) Change of the atlas path to the new path of the library in
+   squeeze. Only required if compiling statically. Checked in Lenny
+   and Squeeze Debian distributions.
+
+   (7) Tridiagonal matrix diagonalization of the model Hamiltonian
+   energies. N_max = 40000.
+
+   (8) Added Perl script alg_U3_energy to compute U(3) model energies.
+
+   (9) Possibility of showing an experimental level without including
+   it in the fit. Indicated with one extra data column in experimental
+   data with flag or 0.0 error value.
+
+
+                   -------------------------------------
+ 
+v. 2.2.2
+
+   (1) In the tri_min_T fitting procedure only eigenvectors that
+   correspond to levels with experimental information are
+   unambiguously assigned. Only exception for in the last minuit
+   iteration (minuit iflag = 3) and if all eigenvectors or eigenstates
+   have to be printed (iprint > 0).
+
+   (2) Added the possibility of saving eigenvalues and eigenstates in the 
+   model Hamiltonian case (program avec_U3_mh).
+ 
+   (3) Alternative assignment of levels with minimum energy difference
+   instead of with quantum labels. New column in experimental
+   data. (---TO DO---)
+

@@ -1,0 +1,16 @@
+#
+## GENERAL INPUT
+#
+ &INP0 BENT=.T., DTFL='exp_HCP_A_bending.dat' / 
+ &INP1 N2=29, LMAX=2, VMAX=6, EMINL=.F. /
+#
+# PARAMETERS THAT TUNE THE OUTPUT
+#
+ &INP2 IPRINT=0 /
+
+
+
+
+
+
+

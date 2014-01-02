@@ -1,0 +1,233 @@
+      PROGRAM ENRGY_GEN_U3
+C
+C     PROGRAM TO COMPUTE ENERGIES FOR A 2-3-4 BODY U(3) GENERAL HAMILTONIAN
+C
+C                    by Currix TM
+C     
+      IMPLICIT NONE
+C
+C     DEFINITION OF PARAMETERS
+C
+      INTEGER N2MAX, DMAX, NPMAX, DIMSCR
+C     
+C     MAXIMUM NUMBER OF U(3) BOSONS (N_2)  
+      PARAMETER (N2MAX = 6000) 
+C     DIMENSION OF SCRATCH VECTOR
+      PARAMETER (DIMSCR = 18000) 
+C     MAXIMUM DIMENSIONS OF MATRICES
+      PARAMETER (DMAX = 3001)
+C     MAXIMUM NUMBER OF PARAMETERS IN THE HAMILTONIAN
+      PARAMETER (NPMAX = 15)
+C     
+C     DEFINITION OF VARIABLES
+C
+C     NAME OF INPUT FILE 
+C
+C     REPRESENTATION OF U(3)
+      INTEGER N2
+C
+C     VIBRATIONAL ANGULAR MOMENTUM
+      INTEGER LVAL
+C     OPTIONS:
+C     IOPTS = 0 OUTPUTS ONLY GROUND STATE ENERGY
+C     IOPTS = 1 OUTPUTS ALL ENERGIES 
+C     IOPTS = 2 OUTPUTS EXCITATION ENERGIES WITH G.S. (L=0) ENERGY = 0
+      INTEGER IOPTS
+C
+C     HAMILTONIAN MATRIX
+      DOUBLE PRECISION HAM(DMAX,DMAX)
+C
+C     COMPUTED ENERGIES MATRIX
+      DOUBLE PRECISION EIGEN(DMAX)
+C     COMPUTED W2 (SO(3) CASIMIR) BLOCKS
+      DOUBLE PRECISION W2MAT(DMAX,DMAX), W4MAT(DMAX,DMAX)
+C     COMPUTED W2·WBAR2+WBAR2·W2 (SO(3) CASIMIR x barSO(3) CASIMIR) MATRIX
+      DOUBLE PRECISION W2W2BARMAT(DMAX,DMAX)
+C
+C     SCRATCH VECTORS AND VARIABLES FOR DIAGONALIZATION
+C     VECTORS IN COMMON
+      DOUBLE PRECISION FV1
+      COMMON/SCRATCH/ FV1(DIMSCR)
+      INTEGER IERR
+C
+C     HAMILTONIAN PARAMETERS
+C
+C     ALGEBRAIC MODEL
+C     HAMILTONIAN PARAMETERS
+      DOUBLE PRECISION P11,P21,P22,P23,P31,P32,P33,P41,
+     *     P42,P43,P44,P45,P46,P47
+C
+C     COMMON BLOCK FOR HAMILTONIAN PARAMETERS
+C
+      DOUBLE PRECISION HPAR
+C
+C    
+      COMMON/HAMPAR/ HPAR(NPMAX)
+C     
+C     CONTROL OF DISPLAYED OUTPUT
+      INTEGER IPRINT
+C
+C     CONTROL OUTPUT DISPLAYED
+      COMMON/GRAF/ IPRINT
+C
+C     LOCAL VARIABLES                                                      
+      INTEGER I,DIM
+      DOUBLE PRECISION  EMIN
+C
+C     READ PARAMETERS
+C
+      READ(5,*) N2 
+      READ(5,*) LVAL
+      READ(5,*) IOPTS
+      READ(5,*) P11
+      READ(5,*) P21
+      READ(5,*) P22
+      READ(5,*) P23
+      READ(5,*) P31
+      READ(5,*) P32
+      READ(5,*) P33
+      READ(5,*) P41
+      READ(5,*) P42
+      READ(5,*) P43
+      READ(5,*) P44
+      READ(5,*) P45
+      READ(5,*) P46
+      READ(5,*) P47
+cc
+c     Debugging variable (MORE VERBOSE THE LARGER IPRINT IS)
+      IPRINT = 0
+cc
+C
+      IF (IPRINT.GT.2) WRITE(*,*) 'MAIN PROGRAM'
+C
+C     TESTS 
+C    
+      IF (LVAL.GT.N2) STOP 'LMX > N2, SAYONARA '
+C
+C ONE BODY
+C     n
+      HPAR(1) = P11
+C
+C TWO BODY
+C     n^2
+      HPAR(2) = P21
+C     L^2
+      HPAR(3) = P22
+C     W^2
+      HPAR(4) = P23
+C
+C THREE BODY
+C     n^3
+      HPAR(5) = P31
+C     n·l^2
+      HPAR(6) = P32
+C     n·W^2 + W^2·n
+      HPAR(7) = P33
+C
+C FOUR BODY
+C     n^4
+      HPAR(8) = P41
+C     n^2·l^2
+      HPAR(9) = P42
+C     l^4
+      HPAR(10) = P43
+C     W^2·l^2
+      HPAR(11) = P44
+C     n^2·W^2 + W^2·n^2
+      HPAR(12) = P45
+C     W^4 
+      HPAR(13) = P46
+C     (W^2·Wb^2 + Wb^2·W^2)/2
+      HPAR(14) = P47
+C     
+C     
+C     INITIALIZE EMIN
+      EMIN = 0.0D0
+C     
+C     MAIN LOOP
+C     
+      IF (LVAL.NE.0.AND.IOPTS.EQ.2) THEN
+C     
+         IF (IPRINT.GT.3) THEN
+            WRITE(*,*)
+            WRITE(*,*) 'L = 0 CALCULATION'
+            WRITE(*,*)
+         ENDIF
+C     BUILD HAMILTONIAN MATRIX
+C     ALGEBRAIC HAMILTONIAN
+         CALL HBLDU3GEN(N2,0,DMAX,HAM,W2MAT,W4MAT,W2W2BARMAT)  
+C     
+C     DIAGONALIZE HAMILTONIAN MATRIX
+         DIM = (N2-MOD(N2,2))/2+1
+         CALL DSYEV('N', 'U', DIM, HAM, DMAX, EIGEN,  FV1,  3*DIM,
+     *        IERR)
+ccccc 
+         if (iprint.gt.1) then
+            do i = 1, dim
+               write(*,*) 'L = 0', i, eigen(i)
+            enddo
+         endif
+ccccc 
+C     
+C     REFER ENERGIES TO G.S.
+C     
+         EMIN = EIGEN(1)
+C     
+      ENDIF
+C
+C     BUILD HAMILTONIAN MATRIX
+C     ALGEBRAIC HAMILTONIAN
+      CALL HBLDU3GEN(N2,LVAL,DMAX,HAM,W2MAT,W4MAT,W2W2BARMAT)  
+C     
+C     DIAGONALIZE HAMILTONIAN MATRIX
+      DIM = (N2-MOD(N2-LVAL,2)-LVAL)/2+1
+      CALL DSYEV('N', 'U', DIM, HAM, DMAX, EIGEN,  FV1,  3*DIM,
+     *     IERR)
+ccccc 
+      if (iprint.gt.1) then
+         do i = 1, dim
+            write(*,*) 'L = ', LVAL, i, eigen(i)
+         enddo
+      endif
+ccccc 
+C     
+C     REFER ENERGIES TO L = 0 G.S.
+C     
+         IF (LVAL.EQ.0) EMIN = EIGEN(1)
+C     
+         IF (IOPTS.EQ.0) THEN
+            WRITE(*,*) EIGEN(1)
+         ELSE         
+            DO I = 1, DIM
+               WRITE(*,*) EIGEN(I) - EMIN
+            ENDDO
+         ENDIF
+C     
+cc      STOP 'Sayonara Baby...'
+C     
+      END
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CC  20		# N      INPUT FILE 
+CC  0  		# l
+CC  1  		# iopts
+CC  0.0d0 	# P11
+CC  0.0d0	# P21
+CC  0.0d0  	# P22
+CC  -1.0d0  	# P23
+CC  0.0d0  	# P31
+CC  0.0d0  	# P32
+CC  0.0d0  	# P33
+CC  0.0d0  	# P41
+CC  0.0d0  	# P42
+CC  0.0d0  	# P43
+CC  0.0d0  	# P44
+CC  0.0d0  	# P45
+CC  0.0d0  	# P46
+CC  0.0d0  	# P47
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      
+
+
+

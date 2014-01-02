@@ -1,0 +1,142 @@
+#!/usr/bin/perl
+#
+# perl program to calculate all or part of the spectrum
+# for the model U(3) Hamiltonian in a xi value interval
+#
+#  by Currix TM.
+#
+use strict;
+use warnings;
+#
+use Getopt::Std;
+#
+# Switches:
+my %options;
+getopts("Svhe:",\%options);
+#
+#
+use File::Temp qw/ tempfile /;
+#
+# bin files path
+my ($binpathmh, $binpathgh);
+#
+(my $prgname) = $0 =~ m#.*/(.+$)#;
+#
+my $usemessage = <<"EOF";
+
+Usage: $prgname [-vhS] [-e progpath] Nval lval scale u ximin ximax xistep
+       
+
+  Options:
+    S : execute statically linked Fortran program
+    v : verbose output
+    h : help message
+    e : provide the executable triat files
+
+EOF
+## 
+die "\n\tPerl script to calculate the u first eigenvalues (g.s. -> u = 1) of 
+the algebraic U(3) model Hamiltonian in a given xi value interval. 
+If  u = 0 all anergies are included.
+
+\tThe energy values are normalized by the number of bosons N (E/N).\n\n by Currix TM\n$usemessage" if
+($options{"h"});
+#
+my ($Nval,$lval,$scale);
+my $xi;
+my ($u,$ximin,$ximax,$xistep);
+my @output;
+#
+#
+#
+my $program;
+if ($options{"e"}) {
+    $program = $options{"e"};
+} else {
+    if ($options{"S"}) {
+        chomp($program = `which en_U3_mh_stat`);
+    } else {
+        chomp($program = `which en_U3_mh`);
+    } 
+}
+unless ($program) {
+    my $deffile;
+    if ($options{"S"}) {
+        $deffile = "../../bin/en_U3_mh_stat";
+    } else {
+        $deffile = "../../bin/en_U3_mh";
+    }
+    if (-x $deffile) { 
+        $program = $deffile;
+    } else {
+        die "no executable $deffile found.\n";
+    }
+}
+#
+print "Executable program: $program \n" if ($options{"v"});
+#
+#
+die "$usemessage" if ($#ARGV!=6);
+($Nval,$lval,$scale,$u,$ximin,$ximax,$xistep) = @ARGV;
+# Check if $u >= 0
+die "\n\tError. The u argument is less than or equal to zero.\n\t For more info execute $prgname -h\n" if ($u < 0);
+print "\tNVal = $Nval\n\tLVal = $lval\n\tSCale: $scale \n\tu: $u\n\n\tximin: $ximin\n\n\tximax: $ximax\n\n\txistep: $xistep\n\n" if ($options{"v"});  
+#
+#
+$xi = $ximin;
+#
+#
+while (&ltequal($xi,$ximax,4)) {
+    print "\tXI = $xi\n" if ($options{"v"});
+#
+    @output = &runprog($Nval,$lval,$scale,$xi);
+#
+##    print "Program output:\n @output\n" if ($options{"v"});
+#
+    print "$xi ";
+    if ($u) {
+#   Take only first $u energies
+        foreach (1..$u) {
+            print $output[$_-1]/$Nval," ";
+        }
+    } else {
+#   u = 0 print all energies
+        foreach (1..$#output+1) {
+            print $output[$_-1]/$Nval," ";
+        }
+    }
+#
+    print "\n";
+#
+    $xi+=$xistep;
+}
+###################################################################
+#    SUBROUTINES
+###################################################################
+sub runprog {
+    my ($Nval,$lval,$scale,$xi) = @_;
+# Temporary input file
+    my ($fh, $name) = tempfile("currixXXXX", DIR => "");
+#
+#                       IOPTS = 1
+    print $fh "$Nval\n$lval\n1\n$scale\n$xi\n";
+    print "$Nval $lval 1 $scale $xi\n" if ($options{"v"});
+#
+    my @output =  `$program < $name`;
+#
+    unlink($name) or die "Couldn't unlink $name : $!\n";
+#
+    @output;
+}
+######################### Perl Cookbook #########################            
+# equal(NUM1, NUM2, ACCURACY) : returns true if NUM1.le.NUM2
+# to ACCURACY number of decimal places
+
+sub ltequal {
+    my ($A, $B, $dp) = @_;
+#
+    return sprintf("%.${dp}g", $A) le sprintf("%.${dp}g", $B);
+}
+
+
+

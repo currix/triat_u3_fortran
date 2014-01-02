@@ -1,0 +1,256 @@
+#!/usr/bin/perl
+#
+# perl program to calculate the Infrared transition intensity between two eigenstates 
+# of the U(3) algebraic model for given xi and N values, a given control parameter xi interval, or a given number of bosons N interval.
+#
+#  by Currix TM.
+#
+use strict;
+use warnings;
+#
+use Getopt::Std;
+#
+# Switches:
+my %options;
+getopts("vhsSn",\%options);
+#
+#
+use File::Temp qw/ tempfile /;
+#
+#
+(my $prgname) = $0 =~ m#.*/(.+$)#;
+#
+my $usemessage = <<"EOF";
+
+Usage: $prgname [-Sv] Nval l1 u1 l2 u2 scale xi
+
+       $prgname [-Sv] -s Nval l1 u1 l2 u2 scale ximin ximax xistep
+
+       $prgname [-Sv] -n Nmin Nmax Nstep l1 u1 l2 u2 scale xi
+
+       $prgname [-h] 
+
+  Options:
+    S : execute statically linked Fortran program
+    v : verbose output
+    h : help message
+    s : consider a series of control parameter values
+    n : consider a series of  N values
+EOF
+##
+die "\nPerl script to calculate the infrared intensity for a dipole transition 
+between eigenstates {l_1}_{u_1} and {l_2}_{u_2} of the U(3) model Hamiltonian 
+in a given xi or N value interval or for a given xi value.
+
+Note that {l}_{u} stands for u-th eigenvector with l angular momentum (g.s. u=1).
+
+The computed matrix element is
+
+|<{l_2}_{u_2}|T_+|{l_1}_{u_1}>|^2 + |<{l_2}_{u_2}|T_-|{l_1}_{u_1}>|^2
+
+with the selection rule |l_1-l_2| = 1. 
+\n
+     by Currix TM\n$usemessage" if ($options{"h"});
+#
+# Executable files
+my $program_ener; # Fortran program to compute eigenstates
+my $program_irin; # Fortran program to compute intensity values
+if ($options{"S"}) {
+    chomp($program_ener = `which avec_U3_mh_stat`);
+    chomp($program_irin = `which ir_intensity_stat`);
+} else {
+    chomp($program_ener = `which avec_U3_mh`);
+    chomp($program_irin = `which ir_intensity`);
+} 
+unless ($program_ener) {
+    my $deffile;
+    if ($options{"S"}) {
+        chomp($deffile = "../../bin/avec_U3_mh_stat");
+    } else {
+        chomp($deffile = "../../bin/avec_U3_mh_T");
+    } 
+    if (-x $deffile) { 
+        $program_ener = $deffile;
+    } else {
+        die "no executable $deffile found.\n";
+    }
+}
+print "Eigenvectors calculation program: $program_ener \n" if ($options{"v"});
+#
+unless ($program_irin) {
+    my $deffile;
+    if ($options{"S"}) {
+        chomp($deffile = "../../bin/ir_intensity_stat");
+    } else {
+        chomp($deffile = "../../bin/ir_intensity");
+    } 
+    if (-x $deffile) { 
+        $program_irin = $deffile;
+    } else {
+        die "no executable $deffile found.\n";
+    }
+}
+print "Intensity calculation program: $program_irin \n" if ($options{"v"});
+#
+#
+my ($Nval,$l1,$u1,$l2,$u2,$scale);
+my $xi;
+my ($ximin,$ximax,$xistep);
+my ($Nmin,$Nmax,$Nstep);
+#
+if ($options{"s"}) {
+    die "$usemessage" if ($#ARGV!=8);
+    ($Nval,$l1,$u1,$l2,$u2,$scale,$ximin,$ximax,$xistep) = @ARGV;
+#
+    print "\tNVal = $Nval\n\tL_1 = $l1\tu_1 = $u1\n\tL_2 = $l2\tu_2 = $u2\n\tSCale: $scale\n\tximin: $ximin\n\tximax: $ximax\n\txistep: $xistep\n\n " if ($options{"v"});  
+#
+} elsif ($options{"n"}) {
+    die "$usemessage" if ($#ARGV!=8);
+    ($Nmin,$Nmax,$Nstep,$l1,$u1,$l2,$u2,$scale,$xi) = @ARGV;
+#
+    print "\tNmin = $Nmin\n\tNmax = $Nmax\n\tNstep = $Nstep\n\tL_1 = $l1\tu_1 = $u1\n\tL_2 = $l2\tu_2 = $u2\n\tSCale: $scale\n\txi: $xi\n\n " if ($options{"v"});  
+#
+} else {    
+#
+    die "$usemessage" if ($#ARGV!=6);
+    ($Nval,$l1,$u1,$l2,$u2,$scale,$xi) = @ARGV;
+#
+    print "\tNVal = $Nval\n\tL_1 = $l1\tu_1 = $u1\n\tL_2 = $l2\tu_2 = $u2\n\tSCale: $scale\n\txi: $xi\n\n " if ($options{"v"});  
+#
+}
+#
+die "\nExecution aborted. Selection rule |l_1 - l_2| = 1 violated. l_1 = $l1, l_2 = $l2.\n\n" if (abs($l1-$l2)!=1);
+#
+# Checks and initializations
+if ($options{"s"}) {
+    die "\nExecution aborted. Control parameter interval : 0 <= xi <= 1.\n\n" if ($ximin<0 || $ximin>1|| $ximax<0 || $ximax>1);
+    die "\nExecution aborted.  ximax < ximin.\n\n" if ($ximin>$ximax);
+#
+    $xi = $ximin;
+} elsif ($options{"n"}) {
+    die "\nExecution aborted. 0 < Nmin < Nmax <= 6000 .\n\n" if ($Nmin<0 || $Nmin>=$Nmax || $Nmax>6000 );
+#
+    $Nval = $Nmin;
+} else {
+    die "\nExecution aborted. Control parameter interval : 0 <= xi <= 1.\n\n" if ($xi<0 || $xi>1);
+#
+    $ximin = $xi;
+    $ximax = $xi;
+    $xistep = 0.1;
+}
+#
+#
+# Calculations
+if ($options{"n"}) {
+    while ($Nval <= $Nmax) {
+        print "\tN = $Nval\n" if ($options{"v"});
+#
+        my $ivalue = &main_block($Nval,$l1,$u1,$l2,$u2,$scale,$xi);
+#
+        print " $Nval    $ivalue\n";
+#
+        $Nval+=$Nstep;
+    }
+} else {
+    while (&ltequal($xi,$ximax+($xistep/2),4)) {
+        print "\tXI = $xi\n" if ($options{"v"});
+#
+        my $ivalue = &main_block($Nval,$l1,$u1,$l2,$u2,$scale,$xi);
+#
+        print " $xi    $ivalue\n";
+#
+        $xi+=$xistep;
+    }
+}
+###################################################################
+#    SUBROUTINES
+###################################################################
+sub runprog {
+    my ($Nval,$lval,$scale,$xi) = @_;
+# 
+    print "subroutine runprog\n" if  ($options{"v"});
+# Temporary input file
+    my ($fh, $name) = tempfile("currixXXXX", DIR => "");
+#
+#                       IOPTS
+    print $fh "$Nval\n$lval\n2\n$scale\n$xi\n.FALSE.\n"; # lsave logical var added
+    print "Program input values :: $Nval $lval 2 $scale $xi\n" if ($options{"v"});
+#
+    my @output =  `$program_ener < $name`;
+#
+    unlink($name) or die "Couldn't unlink $name : $!\n";
+#
+    @output;
+}
+###################################################################
+sub extract_state {
+#
+    my @output = @_;
+#
+    print "subroutine extract_state\n" if  ($options{"v"});
+# State
+    my $u = shift(@output);
+# Dimension
+    my $dim = shift(@output);
+    print "Dimension: $dim\n" if ($options{"v"});
+#     Eliminates states prior to the $u state
+    my $skipval=$dim*($u-1)+($u-1);
+    my @ustate=@output[$skipval..($skipval+$dim)];
+#
+    my $e_u = shift(@ustate);
+#    print "ener :: $e_u\n@ustate\n" if ($options{"v"});
+#
+    unshift(@ustate,$dim);
+#
+    @ustate;
+}
+#
+###################################################################
+sub main_block {
+#
+    my ($Nval,$l1,$u1,$l2,$u2,$scale,$xi) = @_;
+#
+# Eigenstate l_1 u_1
+    my @output = &runprog($Nval,$l1,$scale,$xi);
+##
+    my @state_1 = &extract_state($u1,@output);
+    unshift(@state_1,(" ",$Nval,$l1));
+    print "state 1 :: \n@state_1\n"if ($options{"v"});
+#  Save state_1
+    my ($fh_1, $tmpname_1) = tempfile("state_1_XXXX", DIR => "");
+    print $fh_1 "@state_1";
+#
+# Eigenstate l_2 u_2
+    @output = &runprog($Nval,$l2,$scale,$xi);
+##
+    my @state_2 = &extract_state($u2,@output);
+    unshift(@state_2,(" ",$Nval,$l2));
+    print "state 2 :: \n@state_2\n" if ($options{"v"});
+#  Save state_2
+    my ($fh_2, $tmpname_2) = tempfile("state_2_XXXX", DIR => "");
+    print $fh_2 "@state_2";
+#
+#   Calculate intensity
+    chomp(my $intensity = `echo \'\"$tmpname_1\" \"$tmpname_2\"\' | $program_irin`);
+    print "$Nval  $xi  $intensity\n" if ($options{"v"});
+#
+#   Remove temp files
+    unlink($tmpname_1) or die "Couldn't unlink $tmpname_1 : $!\n";
+    unlink($tmpname_2) or die "Couldn't unlink $tmpname_2 : $!\n";
+#    
+    $intensity;
+}
+#
+#
+######################### Perl Cookbook #########################            
+# equal(NUM1, NUM2, ACCURACY) : returns true if NUM1.le.NUM2
+# to ACCURACY number of decimal places
+
+sub ltequal {
+    my ($A, $B, $dp) = @_;
+#
+    return sprintf("%.${dp}g", $A) le sprintf("%.${dp}g", $B);
+}
+
+
+

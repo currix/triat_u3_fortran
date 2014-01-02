@@ -1,0 +1,315 @@
+ ***************************************************************************
+  MINUIT RELEASE 96.03  INITIALIZED.   DIMENSIONS 100/ 50  EPSMAC=  0.89E-15
+ ***************************************************************************
+                          MINUIT DATA BLOCK NO.   1
+ ***************************************************************************
+minuit> minuit>  'MINUIT MINIMIZATION DEUTERATED FULMINIC ACID BEND
+ ******************************************************************************
+minuit> minuit> 
+ PARAMETER DEFINITIONS:
+    NO.   NAME         VALUE      STEP SIZE      LIMITS
+     1 'P11       '    612.90      0.10000E-02     no limits
+minuit>      2 'P21       '    9.9000      0.10000E-02     no limits
+minuit>      3 'P22       '    0.0000      constant
+minuit>      4 'P23       '   -1.0300      0.10000E-02     no limits
+minuit>      5 'P31       '    0.0000      constant
+minuit>      6 'P32       '    0.0000      constant
+minuit>      7 'P33       '    0.0000      constant
+minuit>      8 'P41       '    0.0000      constant
+minuit>      9 'P42       '    0.0000      constant
+minuit>     10 'P43       '    0.0000      constant
+minuit>     11 'P44       '    0.0000      constant
+minuit>     12 'P45       '    0.0000      constant
+minuit>     13 'P46       '    0.0000      constant
+minuit>     14 'P47       '    0.0000      constant
+minuit>     ***************************************************************************
+
+ MINUIT: FIRST CALL TO USER FUNCTION, WITH IFLAG=1
+ NUMBER OF DATA =           10 CHI2 =    361.09840529061040       SDEV =    6.0091464060264865     
+ NUMBER OF DATA =           10 CHI2 =    361.09840529061040       SDEV =    6.0091464060264865     
+
+ FCN=   361.0984     FROM PARAMETR  STATUS=RESET          2 CALLS        2 TOTAL
+                     EDM= unknown      STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS      PHYSICAL LIMITS       
+  NO.   NAME        VALUE          ERROR       NEGATIVE      POSITIVE  
+   1     P11        612.90       0.10000E-02
+   2     P21        9.9000       0.10000E-02
+   3     P22        0.0000       constant   
+   4     P23       -1.0300       0.10000E-02
+   5     P31        0.0000       constant   
+   6     P32        0.0000       constant   
+   7     P33        0.0000       constant   
+   8     P41        0.0000       constant   
+   9     P42        0.0000       constant   
+  10     P43        0.0000       constant   
+  11     P44        0.0000       constant   
+  12     P45        0.0000       constant   
+  13     P46        0.0000       constant   
+  14     P47        0.0000       constant   
+minuit>  **********
+ **    1 **FIX    3.000       5.000       7.000       8.000    
+ **********       9.000       10.00       11.00       12.00    
+ **********       13.00       14.00    
+ **********
+ PARAMETER   3 IS CONSTANT.      IGNORED.
+ PARAMETER   5 IS CONSTANT.      IGNORED.
+ PARAMETER   7 IS CONSTANT.      IGNORED.
+ PARAMETER   8 IS CONSTANT.      IGNORED.
+ PARAMETER   9 IS CONSTANT.      IGNORED.
+ PARAMETER  10 IS CONSTANT.      IGNORED.
+ PARAMETER  11 IS CONSTANT.      IGNORED.
+ PARAMETER  12 IS CONSTANT.      IGNORED.
+ PARAMETER  13 IS CONSTANT.      IGNORED.
+ PARAMETER  14 IS CONSTANT.      IGNORED.
+minuit>  **********
+ **    2 **#SET ERR   0.1000E-04
+ **********
+           UNKNOWN COMMAND IGNORED:#SET ERR 
+minuit>  **********
+ **    3 **MINIMIZE    3000.    
+ **********
+ START MIGRAD MINIMIZATION.  STRATEGY 1.  CONVERGENCE WHEN EDM .LT. 0.10E-03
+ NUMBER OF DATA =           10 CHI2 =    361.01863183490008       SDEV =    6.0084826024121938     
+ NUMBER OF DATA =           10 CHI2 =    361.17820462850995       SDEV =    6.0098103516542842     
+ NUMBER OF DATA =           10 CHI2 =    360.89241600183340       SDEV =    6.0074321968860653     
+ NUMBER OF DATA =           10 CHI2 =    361.30456724136332       SDEV =    6.0108615625496098     
+ NUMBER OF DATA =           10 CHI2 =    361.08091989877352       SDEV =    6.0090009144513656     
+ NUMBER OF DATA =           10 CHI2 =    361.11589189301560       SDEV =    6.0092919041515662     
+ NUMBER OF DATA =           10 CHI2 =    360.92360584821785       SDEV =    6.0076917851053064     
+ NUMBER OF DATA =           10 CHI2 =    361.27332579108423       SDEV =    6.0106016819540145     
+ NUMBER OF DATA =           10 CHI2 =    360.03549386926960       SDEV =    6.0002957749536785     
+ NUMBER OF DATA =           10 CHI2 =    362.16596473372931       SDEV =    6.0180226381572322     
+ NUMBER OF DATA =           10 CHI2 =    360.89318172875238       SDEV =    6.0074385700459088     
+ NUMBER OF DATA =           10 CHI2 =    361.30380151442802       SDEV =    6.0108551930189433     
+
+ FCN=   361.0984     FROM MIGRAD    STATUS=INITIATE      12 CALLS       14 TOTAL
+                     EDM= unknown      STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS       STEP         FIRST   
+  NO.   NAME        VALUE          ERROR          SIZE      DERIVATIVE 
+   1     P11        612.90       0.10000E-02   0.10000E-02   -273.00    
+   2     P21        9.9000       0.10000E-02   0.10000E-02   -1748.6    
+   3     P22        0.0000       constant   
+   4     P23       -1.0300       0.10000E-02   0.10000E-02  -0.10652E+06
+   5     P31        0.0000       constant   
+   6     P32        0.0000       constant   
+   7     P33        0.0000       constant   
+   8     P41        0.0000       constant   
+   9     P42        0.0000       constant   
+  10     P43        0.0000       constant   
+  11     P44        0.0000       constant   
+  12     P45        0.0000       constant   
+  13     P46        0.0000       constant   
+  14     P47        0.0000       constant   
+ NUMBER OF DATA =           10 CHI2 =    719.67737412362885       SDEV =    8.4833800700170734     
+ NUMBER OF DATA =           10 CHI2 =    236.24208394748368       SDEV =    4.8604740915622999     
+ NUMBER OF DATA =           10 CHI2 =    236.24362720572660       SDEV =    4.8604899671301309     
+ NUMBER OF DATA =           10 CHI2 =    236.24065373102727       SDEV =    4.8604593788141806     
+ NUMBER OF DATA =           10 CHI2 =    236.24006113128334       SDEV =    4.8604532826813935     
+ NUMBER OF DATA =           10 CHI2 =    236.24421882318399       SDEV =    4.8604960531121097     
+ NUMBER OF DATA =           10 CHI2 =    236.24382488188473       SDEV =    4.8604920006300265     
+ NUMBER OF DATA =           10 CHI2 =    236.24045583693385       SDEV =    4.8604573430587150     
+ NUMBER OF DATA =           10 CHI2 =    236.16315925989733       SDEV =    4.8596621205583554     
+ NUMBER OF DATA =           10 CHI2 =    235.87510078822703       SDEV =    4.8566974456746532     
+ NUMBER OF DATA =           10 CHI2 =    235.34829382163167       SDEV =    4.8512709038109971     
+ NUMBER OF DATA =           10 CHI2 =    235.07412404768985       SDEV =    4.8484443283149066     
+ NUMBER OF DATA =           10 CHI2 =    235.06481669683376       SDEV =    4.8483483445069595     
+ NUMBER OF DATA =           10 CHI2 =    235.08354383322637       SDEV =    4.8485414696919564     
+ NUMBER OF DATA =           10 CHI2 =    235.06325805100226       SDEV =    4.8483322704926302     
+ NUMBER OF DATA =           10 CHI2 =    235.08510249822945       SDEV =    4.8485575432104486     
+ NUMBER OF DATA =           10 CHI2 =    235.06457480582048       SDEV =    4.8483458499350114     
+ NUMBER OF DATA =           10 CHI2 =    235.08378564131741       SDEV =    4.8485439633081331     
+ NUMBER OF DATA =           10 CHI2 =    234.44106014139717       SDEV =    4.8419114008973478     
+ NUMBER OF DATA =           10 CHI2 =    234.31761411948250       SDEV =    4.8406364676505351     
+ NUMBER OF DATA =           10 CHI2 =    234.31796627389258       SDEV =    4.8406401051296157     
+ NUMBER OF DATA =           10 CHI2 =    234.31737407488063       SDEV =    4.8406339881763483     
+ NUMBER OF DATA =           10 CHI2 =    234.31765288756455       SDEV =    4.8406368680945748     
+ NUMBER OF DATA =           10 CHI2 =    234.31768737542035       SDEV =    4.8406372243271889     
+ NUMBER OF DATA =           10 CHI2 =    234.31738470210584       SDEV =    4.8406340979473530     
+ NUMBER OF DATA =           10 CHI2 =    234.31795556907906       SDEV =    4.8406399945573213     
+ NUMBER OF DATA =           10 CHI2 =    234.31610728031521       SDEV =    4.8406209031519420     
+ NUMBER OF DATA =           10 CHI2 =    234.31009628056634       SDEV =    4.8405588136140478     
+ NUMBER OF DATA =           10 CHI2 =    234.29518323093237       SDEV =    4.8404047685181490     
+ NUMBER OF DATA =           10 CHI2 =    234.25142385873562       SDEV =    4.8399527255825099     
+ NUMBER OF DATA =           10 CHI2 =    234.12893131847468       SDEV =    4.8386871289480444     
+ NUMBER OF DATA =           10 CHI2 =    233.83965296963612       SDEV =    4.8356969815077964     
+ NUMBER OF DATA =           10 CHI2 =    233.60432228617108       SDEV =    4.8332631035995863     
+ NUMBER OF DATA =           10 CHI2 =    233.61484362638225       SDEV =    4.8333719454060455     
+ NUMBER OF DATA =           10 CHI2 =    233.59391261129727       SDEV =    4.8331554145433531     
+ NUMBER OF DATA =           10 CHI2 =    233.61492291101288       SDEV =    4.8333727655852581     
+ NUMBER OF DATA =           10 CHI2 =    233.59383279521089       SDEV =    4.8331545888292347     
+ NUMBER OF DATA =           10 CHI2 =    233.61429023711216       SDEV =    4.8333662207318016     
+ NUMBER OF DATA =           10 CHI2 =    233.59446577642638       SDEV =    4.8331611371485055     
+ NUMBER OF DATA =           10 CHI2 =    232.68653550478297       SDEV =    4.8237592757597572     
+ NUMBER OF DATA =           10 CHI2 =    231.71024339523683       SDEV =    4.8136290197234439     
+ NUMBER OF DATA =           10 CHI2 =    231.69929654313384       SDEV =    4.8135153115278841     
+ NUMBER OF DATA =           10 CHI2 =    231.69905345367968       SDEV =    4.8135127864552274     
+ NUMBER OF DATA =           10 CHI2 =    231.69965015663456       SDEV =    4.8135189846580495     
+ NUMBER OF DATA =           10 CHI2 =    231.69918667022063       SDEV =    4.8135141702317714     
+ NUMBER OF DATA =           10 CHI2 =    231.69951574524231       SDEV =    4.8135175884714734     
+ NUMBER OF DATA =           10 CHI2 =    231.69903260142456       SDEV =    4.8135125698539998     
+ NUMBER OF DATA =           10 CHI2 =    231.69967051103777       SDEV =    4.8135191960875963     
+ NUMBER OF DATA =           10 CHI2 =    231.69549343466053       SDEV =    4.8134758068848811     
+ NUMBER OF DATA =           10 CHI2 =    231.69559120550980       SDEV =    4.8134768224798776     
+ NUMBER OF DATA =           10 CHI2 =    231.69550664026934       SDEV =    4.8134759440581956     
+ NUMBER OF DATA =           10 CHI2 =    231.69559019465080       SDEV =    4.8134768119795774     
+ NUMBER OF DATA =           10 CHI2 =    231.69550767935212       SDEV =    4.8134759548516719     
+ NUMBER OF DATA =           10 CHI2 =    231.69559022859059       SDEV =    4.8134768123321274     
+ NUMBER OF DATA =           10 CHI2 =    231.69550763447498       SDEV =    4.8134759543855106     
+ NUMBER OF DATA =           10 CHI2 =    231.69547854791580       SDEV =    4.8134756522487550     
+ NUMBER OF DATA =           10 CHI2 =    231.69553466237568       SDEV =    4.8134762351379248     
+ NUMBER OF DATA =           10 CHI2 =    231.69553339023949       SDEV =    4.8134762219236054     
+ NUMBER OF DATA =           10 CHI2 =    231.69553452533367       SDEV =    4.8134762337144004     
+ NUMBER OF DATA =           10 CHI2 =    231.69553352456415       SDEV =    4.8134762233189035     
+ NUMBER OF DATA =           10 CHI2 =    231.69553475954947       SDEV =    4.8134762361473173     
+ NUMBER OF DATA =           10 CHI2 =    231.69553329188270       SDEV =    4.8134762209019240     
+
+ MIGRAD MINIMIZATION HAS CONVERGED.
+
+ MIGRAD WILL VERIFY CONVERGENCE AND ERROR MATRIX.
+ NUMBER OF DATA =           10 CHI2 =    231.69547854791580       SDEV =    4.8134756522487550     
+ NUMBER OF DATA =           10 CHI2 =    231.69553466237568       SDEV =    4.8134762351379248     
+ NUMBER OF DATA =           10 CHI2 =    231.69553339023949       SDEV =    4.8134762219236054     
+ NUMBER OF DATA =           10 CHI2 =    231.69553452533367       SDEV =    4.8134762337144004     
+ NUMBER OF DATA =           10 CHI2 =    231.69553352456415       SDEV =    4.8134762233189035     
+ NUMBER OF DATA =           10 CHI2 =    231.69553475954947       SDEV =    4.8134762361473173     
+ NUMBER OF DATA =           10 CHI2 =    231.69553329188270       SDEV =    4.8134762209019240     
+ NUMBER OF DATA =           10 CHI2 =    231.69548184517663       SDEV =    4.8134756864990669     
+ NUMBER OF DATA =           10 CHI2 =    231.69548154225612       SDEV =    4.8134756833524790     
+ NUMBER OF DATA =           10 CHI2 =    231.69548086709921       SDEV =    4.8134756763392836     
+ NUMBER OF DATA =           10 CHI2 =    231.69548066688768       SDEV =    4.8134756742595854     
+ NUMBER OF DATA =           10 CHI2 =    231.69548091379633       SDEV =    4.8134756768243498     
+ NUMBER OF DATA =           10 CHI2 =    231.69548062025819       SDEV =    4.8134756737752209     
+ NUMBER OF DATA =           10 CHI2 =    231.69570022056482       SDEV =    4.8134779548738438     
+ NUMBER OF DATA =           10 CHI2 =    231.69570171926392       SDEV =    4.8134779704415802     
+ NUMBER OF DATA =           10 CHI2 =    231.69569959061639       SDEV =    4.8134779483302550     
+ COVARIANCE MATRIX CALCULATED SUCCESSFULLY
+
+ FCN=   231.6955     FROM MIGRAD    STATUS=CONVERGED     90 CALLS       92 TOTAL
+                     EDM=  0.68E-07    STRATEGY= 1      ERROR MATRIX ACCURATE 
+
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME        VALUE          ERROR          SIZE      DERIVATIVE 
+   1     P11        606.91        3.6942       0.60766E-03   0.10467E-02
+   2     P21        10.237       0.13658       0.97335E-04   0.51423E-02
+   3     P22        0.0000       constant   
+   4     P23       -1.0177       0.76793E-02   0.15591E-05   0.47068    
+   5     P31        0.0000       constant   
+   6     P32        0.0000       constant   
+   7     P33        0.0000       constant   
+   8     P41        0.0000       constant   
+   9     P42        0.0000       constant   
+  10     P43        0.0000       constant   
+  11     P44        0.0000       constant   
+  12     P45        0.0000       constant   
+  13     P46        0.0000       constant   
+  14     P47        0.0000       constant   
+
+ EXTERNAL ERROR MATRIX.    NDIM=  50    NPAR=  3    ERR DEF=  1.00    
+  0.136E+02-0.439E+00-0.281E-01
+ -0.439E+00 0.187E-01 0.831E-03
+ -0.281E-01 0.831E-03 0.590E-04
+
+ PARAMETER  CORRELATION COEFFICIENTS
+       NO.  GLOBAL     1     2     4
+        1  0.99976  1.000-0.869-0.990
+        2  0.99541 -0.869 1.000 0.793
+        4  0.99963 -0.990 0.793 1.000
+minuit>  **********
+ **    4 **CALL    3.000    
+ **********
+    LINEAR CASE      N2 =  140    VIBR. ANG. MOM. =    0
+
+    NUMBER OF EXP. DATA =    2      PARTIAL CHI SQ.    0.27256D+02
+
+    ***********************************************************      
+    ***********************************************************
+     EXP.(n  L)    Calc.Energy      Exp.Energy   Calc.-Exp.
+       (  2  0)      536.6604      541.76( 1.0)    -5.09964
+       (  4  0)     1246.6321     1247.75( 1.0)    -1.11791
+    ***********************************************************      
+    ***********************************************************
+
+
+    LINEAR CASE      N2 =  140    VIBR. ANG. MOM. =    1
+
+    NUMBER OF EXP. DATA =    2      PARTIAL CHI SQ.    0.72737D+02
+
+    ***********************************************************      
+    ***********************************************************
+     EXP.(n  L)    Calc.Energy      Exp.Energy   Calc.-Exp.
+       (  1  1)      230.7178      224.10( 1.0)     6.61783
+       (  3  1)      866.7303      872.11( 1.0)    -5.37969
+    ***********************************************************      
+    ***********************************************************
+
+
+    LINEAR CASE      N2 =  140    VIBR. ANG. MOM. =    2
+
+    NUMBER OF EXP. DATA =    2      PARTIAL CHI SQ.    0.30284D+02
+
+    ***********************************************************      
+    ***********************************************************
+     EXP.(n  L)    Calc.Energy      Exp.Energy   Calc.-Exp.
+       (  2  2)      504.5121      499.06( 1.0)     5.45207
+       (  4  2)     1224.7025     1225.45( 1.0)    -0.74746
+    ***********************************************************      
+    ***********************************************************
+
+
+    LINEAR CASE      N2 =  140    VIBR. ANG. MOM. =    3
+
+    NUMBER OF EXP. DATA =    2      PARTIAL CHI SQ.    0.76096D+02
+
+    ***********************************************************      
+    ***********************************************************
+     EXP.(n  L)    Calc.Energy      Exp.Energy   Calc.-Exp.
+       (  3  3)      815.4901      814.04( 1.0)     1.45014
+       (  5  3)     1610.8819     1602.28( 1.0)     8.60194
+    ***********************************************************      
+    ***********************************************************
+
+
+    LINEAR CASE      N2 =  140    VIBR. ANG. MOM. =    4
+
+    NUMBER OF EXP. DATA =    1      PARTIAL CHI SQ.    0.62257D+01
+
+    ***********************************************************      
+    ***********************************************************
+     EXP.(n  L)    Calc.Energy      Exp.Energy   Calc.-Exp.
+       (  4  4)     1160.1649     1162.66( 1.0)    -2.49514
+    ***********************************************************      
+    ***********************************************************
+
+
+    LINEAR CASE      N2 =  140    VIBR. ANG. MOM. =    5
+
+    NUMBER OF EXP. DATA =    1      PARTIAL CHI SQ.    0.19097D+02
+
+    ***********************************************************      
+    ***********************************************************
+     EXP.(n  L)    Calc.Energy      Exp.Energy   Calc.-Exp.
+       (  5  5)     1536.2300     1540.60( 1.0)    -4.37002
+    ***********************************************************      
+    ***********************************************************
+
+
+ NUMBER OF DATA =           10 CHI2 =    231.69547854791580       SDEV =    4.8134756522487550     
+ ONE BODY ::  P11 =      606.91    
+ TWO BODY ::  P21 =     10.2370     P22 =     0.00000     P23 =    -1.01769    
+ THREE BODY ::  P31 =     0.00000     P32 =     0.00000     P33 =     0.00000    
+ FOUR BODY (i)::  P41 =     0.00000     P42 =     0.00000     P43 =     0.00000    
+ FOUR BODY (ii)::  P44 =     0.00000     P45 =     0.00000     P46 =     0.00000    
+ FOUR BODY (iii)::  P47 =     0.00000    
+   ONE BODY ::  P11 =      606.91    
+   TWO BODY ::  P21 =     10.2370     P22 =     0.00000     P23 =    -1.01769    
+   THREE BODY ::  P31 =     0.00000     P32 =     0.00000     P33 =     0.00000    
+   FOUR BODY (i)::  P41 =     0.00000     P42 =     0.00000     P43 =     0.00000    
+   FOUR BODY (ii)::  P44 =     0.00000     P45 =     0.00000     P46 =     0.00000    
+   FOUR BODY (iii)::  P47 =     0.00000    
+ CHISQRE =      231.695479  SDEV =        4.813476
+minuit>  **********
+ **    5 **EXIT 
+ **********
+ ..........MINUIT TERMINATED BY MINUIT COMMAND: EXIT                 

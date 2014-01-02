@@ -1,0 +1,111 @@
+#!/usr/bin/perl
+# 
+# Usage Script to execute launch minuit and perform chisquare minimization
+# for the general U(3) algebraic Hamiltonian
+#
+# by currix TM
+#
+use strict;
+use warnings;
+#
+use File::Copy;
+use File::Path;
+#
+use Getopt::Std;
+# Switches:
+my %options;
+getopts("vtSe:",\%options);
+#
+(my $prgname) = $0 =~ m#.*/(.+$)#;
+#
+my $usemessage = <<"EOF";
+
+ Usage: $prgname [-vtS] minpar_file input_file output_file
+        $prgname  [-vt] [-e prgfile] minpar_file input_file output_file
+ Options:
+          t :  do not remove temporary directory
+          e :  minimization program
+          S :  execute the statically linked program
+          v :  verbose output
+
+EOF
+die "$usemessage" unless ($ARGV[2]);
+#
+my $minparfile = $ARGV[0];
+my $inputfile = $ARGV[1];
+my $outputfile = $ARGV[2];
+#
+print "\nMinuit CHISQRE minimization. U(3) General Hamiltonian. \n" if ($options{"v"});
+#
+my $program;
+#
+if ($options{"e"}) {
+    $program = $options{"e"};
+} else {
+    if ($options{"S"}) {
+        chomp($program = `which tri_min_Tstat`);
+    } else {
+        chomp($program = `which tri_min_T`);
+    }
+    unless ($program) {
+        my $deffile;
+        if ($options{"S"}) {
+            $deffile = "../../bin/tri_min_Tstat";
+        } else {
+            $deffile = "../../bin/tri_min_T";
+        }
+        if (-x $deffile) { 
+        $program = "../".$deffile;
+        } else {
+            die "no executable $deffile found.\n";
+        }
+    }
+}
+print "Executable program: $program \n" if ($options{"v"});
+#
+# make temporary directory
+print "Making temporary directory ... " if ($options{"v"});
+my $tmpdirname = "tmpdir_".$$."n".int(rand(100));
+mkdir ("$tmpdirname",0777) || die "cannot mkdir temporary dir: $!";
+print "Done.\n" if ($options{"v"});
+#
+# extract name of energy file from input file
+print "Experimental energy file name is: " if ($options{"v"});
+open(IFILE,"<$inputfile") || die "cannot open $inputfile: $!";
+my $exdatafile;
+while (<IFILE>) {
+    if (/^ &INP0.*\'(.*)\'.*/) {
+	$exdatafile = $1;
+	last;
+    }
+}    
+close(IFILE);
+print "$exdatafile\n" if ($options{"v"});
+#
+# copy necessary files to tmpdir
+print "Copying files to temporary directory ... " if ($options{"v"});
+copy("$inputfile","$tmpdirname/minuit_u3_fit.inp")|| die "cannot copy $inputfile to temporary dir: $!"; 
+copy("$minparfile","$tmpdirname") || die "cannot copy $minparfile to temporary dir: $!";	
+copy("$exdatafile","$tmpdirname") || die "cannot copy $exdatafile to temporary dir: $!";	
+print "Done.\n" if ($options{"v"});
+#
+# make tmpdir the wd
+chdir("$tmpdirname")|| die "cannot chdir to temporary dir: $!";	
+#
+print "Running optimization program ... " if ($options{"v"});
+system "$program < $minparfile > output";
+print "Done.\n" if ($options{"v"});
+#
+# copy output files to original directory
+print "Copying output file from temporary directory ... " if ($options{"v"});
+copy("output","../$outputfile") || die "cannot copy $outputfile to original dir: $!"; 
+print "Done.\n" if ($options{"v"});
+#
+# remove temporary directory
+unless ($options{"t"}) {
+    chdir("..");
+# Caution:: Removes recursively a directory (= rm -rf ...) !!!
+    print "Removing temporary directory ... " if ($options{"v"});
+    rmtree("$tmpdirname");
+    print "Done.\n " if ($options{"v"});
+}

@@ -1,0 +1,113 @@
+      SUBROUTINE HAMU3TRID(N2,L,HAMD, HAML)
+C     
+C     SUBROUTINE THAT BUILDS THE DIAGONAL AND LOWER DIAGONAL 
+C     VECTORS OF THE U(3) MODEL HAMILTONIAN MATRIX IN  
+C     THE U(3) MODEL FOR BENDING VIBRATIONS
+C
+C     INPUT
+C     N2   : U(3) IRREP LABEL (BENDING)
+C     L    : VIBRATIONAL ANGULAR MOMENTUM LABEL
+C
+C     OUTPUT
+C     HAMD     : DIAGONAL OF THE HAMILTONIAN MATRIX
+C     HAML     : LOWER DIAGONAL OF THE HAMILTONIAN MATRIX
+C
+C     BENDING HAMILTONIAN
+C     TRIATOMIC ABC MOLECULE
+C     G = C1 (BENT) OR C_INFV (LINEAR)
+C
+C     H = SCALE[(1-XI) n + XI/(N-1) P] 
+C     H = EPSILON n + A P 
+C
+C     HPAR(1) = EPSILON
+C     HPAR(2) = A
+C     
+C     by Currix TM
+C     
+      IMPLICIT NONE
+C
+      INTEGER NPMAX
+C     MAXIMUM NUMBER OF PARAMETERS IN THE HAMILTONIAN
+      PARAMETER (NPMAX = 2)
+C     
+C     DEFINITION OF VARIABLES
+C     
+      INTEGER N2, L
+C
+      DOUBLE PRECISION HAMD(*), HAML(*)
+C
+C     COMMON BLOCK FOR HAMILTONIAN PARAMETERS
+C
+      DOUBLE PRECISION HPAR
+C
+C
+      COMMON/HAMPAR/ HPAR(NPMAX)
+C     
+      INTEGER IPRINT
+C
+C     CONTROL OUTPUT DISPLAYED
+      COMMON/GRAF/ IPRINT
+C
+C     LOCAL VARIABLES
+      INTEGER I, DIM
+C     TEMPORAL VALUES TO STORE INTEGERS AS DOUBLE PREC. REALS
+      DOUBLE PRECISION VL, V2, VNN
+C     
+C     
+      IF (IPRINT.GT.2) WRITE(*,*) 'SUBROUTINE HAMILTONIAN BUILDING'
+C
+C     MATRIX DIMENSIONS
+      DIM = (N2-MOD(N2-L,2)-L)/2+1
+C     INITIALIZATION
+      DO I = 1, DIM
+            HAMD(I) = 0.0D0
+      ENDDO
+      DO I = 1, DIM
+            HAML(I) = 0.0D0
+      ENDDO
+C
+      VNN = DFLOAT(N2)
+      VL = DFLOAT(L)
+C
+C     DIAGONAL
+C     
+      DO I = 1, DIM
+C
+     
+         V2 = DFLOAT(N2 - (2*I-2+MOD(N2-L,2)))
+C     
+         HAMD(I) = HPAR(1)*V2 + 
+     *        HPAR(2)*
+     *        ( 
+     *        VNN*(VNN+1.0D0) - 
+     *        ( (VNN-V2)*(V2+2.0D0)+(VNN-V2+1.0D0)*V2+VL*VL )
+     *        ) 
+C     
+      ENDDO
+C     
+C
+C     SUBDIAGONAL
+C     
+      DO I = 1, DIM-1
+C
+     
+         V2 = DFLOAT(N2 - (2*I-2+MOD(N2-L,2)))
+C     
+         HAML(I) = - HPAR(2)*
+     *        DSQRT((VNN-V2+2.0D0)*(VNN-V2+1.0D0)*(V2+VL)*(V2-VL))
+C     
+      ENDDO
+C     
+      RETURN
+C
+      END
+      
+
+
+
+
+
+
+
+
+
