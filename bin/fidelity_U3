@@ -1,0 +1,161 @@
+#!/usr/bin/perl
+#
+# perl program to calculate the fidelity for the eigenstates
+# of a given v.a.m l and a xi value interval
+#
+# $Id$
+#
+#  by Currix TM.
+#
+use strict;
+use warnings;
+#
+use Getopt::Std;
+#
+# Switches:
+my %options;
+getopts("REmvhe:",\%options);
+#
+#
+use File::Temp qw/ tempfile /;
+#
+# bin files path
+my ($binpathmh, $binpathgh);
+#
+(my $prgname) = $0 =~ m#.*/(.+$)#;
+#
+my $usemessage = <<"EOF";
+
+Usage: $prgname [-h]
+       $prgname [-v] [-R] [-E[m]] [-e progpath] Nval lval scale ximin ximax xistep deltaxi
+
+  Options:
+    v : verbose output
+    h : help message
+    e : provide the executable filename
+    E : include in the output the mean normalized energy
+    m : output mean energies
+    R : output susceptibility for plot in R (xi exc_ener susc)
+
+EOF
+##
+die "\n\tPerl script to calculate the value of the fidelity, its first and its second derivative 
+in the 2DVM between two given xi values.\n\n by Currix TM\n$usemessage" if
+($options{"h"});
+#
+my ($Nval,$lval,$scale);
+my $xi;
+my ($u,$ximin,$ximax,$xistep, $deltaxi);
+my @output0;
+my @output1;
+#
+#
+#
+my $program;
+if ($options{"e"}) {
+    $program = $options{"e"};
+} else {
+  chomp($program = `which avec_U3_mh`);
+}
+unless ($program) {
+  my $deffile;
+  $deffile = "../../bin/avec_U3_mh";
+  if (-x $deffile) { 
+    $program = $deffile;
+  } else {
+    die "no executable $deffile found.\n";
+  }
+}
+#
+print "Executable program: $program \n" if ($options{"v"});
+#
+#
+#
+die "$usemessage" if ($#ARGV!=6);
+#
+($Nval,$lval,$scale,$ximin, $ximax, $xistep, $deltaxi) = @ARGV;
+#
+print "\n\tNVal = $Nval\n\tLVal = $lval\n\tSCale: $scale \n\tXImin: $ximin\tXImax = $ximax\t XIstep = $xistep\tdeltaXI = $deltaxi\n\n" if ($options{"v"});  
+#
+#
+$xi = $ximin;
+my $nitermax = ($ximax-$ximin)/$xistep + 1;
+my $niter = 1;
+#
+while ($xi <= $ximax) {
+  print "\tIteration: $niter\tXI = $xi\n" if ($options{"v"});
+  #
+  @output0 = &runprog($Nval,$lval,$scale,$xi);
+  @output1 = &runprog($Nval,$lval,$scale,$xi+$deltaxi);
+  #
+  chomp(my $dim0 = shift(@output0));
+  chomp(my $dim1 = shift(@output1));
+  print "Dimension: $dim0, $dim1\n" if ($options{"v"});
+  my $skipval0 = 0;
+  print "$xi " unless ($options{"R"});
+  foreach my $ustate0 (1..$dim0) {
+    my @ustate0 = @output0[$skipval0..($skipval0+$dim0)];
+    my @ustate1 = @output1[$skipval0..($skipval0+$dim0)];
+    #
+    print "ustate 0 : @ustate0\n" if ($options{"v"});
+    print "ustate 1 : @ustate1\n" if ($options{"v"});
+    #
+    chomp(my $ener0 = shift(@ustate0));
+    chomp(my $ener1 = shift(@ustate1));
+    #
+    my $fidelity = (&sca_prod(\@ustate0,\@ustate1))**2;
+    my $susc = 2*(1-$fidelity)/($deltaxi)**2;
+    print "ener :: $ener0, $ener1\t$fidelity\t$susc\n" if ($options{"v"});
+    my $enerm = $ener0/$Nval;
+    $enerm = ($ener0 + $ener1)/(2*$Nval) if ($options{"m"});
+    if ($options{"R"}) {
+      print "$xi $enerm $susc\n";
+    } elsif ($options{"E"}) {
+      print " $enerm $fidelity $susc";
+    } else {
+      print " $fidelity $susc";
+    }
+    #
+    $skipval0 += $dim0 + 1;
+  }
+  print "\n"  unless ($options{"R"});
+  #
+  $xi = $ximin + $niter*$xistep;
+  $niter++;
+  last if ($xi + $deltaxi > $ximax);
+}
+###################################################################
+#    SUBROUTINES
+###################################################################
+sub runprog {
+    my ($Nval,$lval,$scale,$xi) = @_;
+# Temporary input file
+    my ($fh, $name) = tempfile("currixXXXX", DIR => "");
+#
+#                       IOPTS
+    print $fh "$Nval\n$lval\n2\n$scale\n$xi\n.FALSE.\n"; # Added lsave definition
+    print "$Nval $lval 2 $scale $xi\n" if ($options{"v"});
+#
+    my @output =  `$program < $name`;
+#
+    unlink($name) or die "Couldn't unlink $name : $!\n";
+#
+    @output;
+}
+sub sca_prod {
+  my $refv1 = shift;  
+  my $refv2 = shift;
+  #
+  my $dim = @{$refv1};
+  #
+  my $scapr = 0;
+  foreach (0..$dim-1) {
+    #
+    my ($comp1,$n1,$l1) = split ' ', ${$refv1}[$_];
+    my ($comp2,$n2,$l2) = split ' ', ${$refv2}[$_];
+    #    print "$comp1; $comp2\n";
+    #
+    $scapr += $comp1*$comp2;
+  }
+  $scapr;
+}
