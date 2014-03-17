@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # perl program to calculate the fidelity for the eigenstates
-# of a given v.a.m l and a xi value interval
+# of a given v.a.m l in a xi value interval
 #
 # $Id$
 #
@@ -40,7 +40,7 @@ Usage: $prgname [-h]
 EOF
 ##
 die "\n\tPerl script to calculate the value of the fidelity, its first and its second derivative 
-in the 2DVM between two given xi values.\n\n by Currix TM\n$usemessage" if
+in the 2DVM between two given control parameter xi values.\n\n by Currix TM\n$usemessage" if
 ($options{"h"});
 #
 my ($Nval,$lval,$scale);
