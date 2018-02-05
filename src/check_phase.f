@@ -48,7 +48,7 @@ C
 C
       DO I = 1, DIM
 C
-         IF (ABS(W2MAT(1,I)).LT.TOLERANCE) THEN
+         IF (ABS(W2MAT(1,I)).LT.TOLERANCE .AND. IPRINT .GT. 0) THEN
             WRITE(*,*) 'WARNING: ',I,
      *           '-TH EIGENVECTOR COMPONENT < TOLERANCE'
          ELSE
