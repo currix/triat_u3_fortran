@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+
+<html>
+
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+
+<title>triat_u3 User's Guide - Installation guide</title>
+
+<link href="index.html" rel="start">
+<link href="ch-cap_0.html" rel="prev">
+<link href="ch-cap_2.html" rel="next">
+<link href="index.html#contents" rel="contents">
+<link href="index.html#copyright" rel="copyright">
+<link href="ch-cap_0.html" rel="chapter" title="1 Introduction">
+<link href="ch-cap_1.html" rel="chapter" title="2 Installation guide">
+<link href="ch-cap_2.html" rel="chapter" title="3 Getting Started">
+<link href="ch-cap_ref.html" rel="chapter" title="4 References">
+<link href="ch-cap_0.html#s-sec_0_1" rel="section" title="1.1 What's <code>triat_u3</code>?">
+<link href="ch-cap_0.html#s-sec_0_2" rel="section" title="1.2 Copyright statement">
+<link href="ch-cap_1.html#s-sec_1_1" rel="section" title="2.1 Program compilation">
+<link href="ch-cap_2.html#s-sec_2_0" rel="section" title="3.1 Minimization code <code>tri_min_T</code>">
+<link href="ch-cap_2.html#s-sec_2_1" rel="section" title="3.2 Eigenvalue calculation codes">
+<link href="ch-cap_2.html#s-sec_2_2" rel="section" title="3.3 Eigenvalues and eigenstates calculation code <code>avec_U3_gen_T</code>">
+<link href="ch-cap_2.html#s-sec_2_3" rel="section" title="3.4 Calculation of observables of interest">
+<link href="ch-cap_2.html#s-sec_2_0_1" rel="subsection" title="3.1.1 Input Files and Program Execution">
+<link href="ch-cap_2.html#s-sec_2_0_1_1" rel="subsection" title="3.1.1.1 Experimental Energy File">
+<link href="ch-cap_2.html#s-sec_2_0_1_2" rel="subsection" title="3.1.1.2 General Input File">
+<link href="ch-cap_2.html#s-sec_2_0_1_3" rel="subsection" title="3.1.1.3 Minuit Parameter Input File">
+<link href="ch-cap_2.html#s-sec_2_0_1_4" rel="subsection" title="3.1.1.4 Program Execution">
+<link href="ch-cap_2.html#s-sec_2_0_2" rel="subsection" title="3.1.2 Examples">
+<link href="ch-cap_2.html#s-sec_2_0_2_1" rel="subsection" title="3.1.2.1 Linear Molecule Example: Fulminic Acid Large Amplitude Bending Mode">
+<link href="ch-cap_2.html#s-sec_2_0_2_2" rel="subsection" title="3.1.2.2 Bent Molecule Example: Methinophosphide A Excited Electronic State Bending Mode">
+<link href="ch-cap_2.html#s-sec_2_1_1" rel="subsection" title="3.2.1 Eigenvalue calculation code <code>en_U3_gen_T</code>">
+<link href="ch-cap_2.html#s-sec_2_1_1_1" rel="subsection" title="3.2.1.1 Input Files and Program Execution">
+<link href="ch-cap_2.html#s-sec_2_1_1_2" rel="subsection" title="3.2.1.2 Examples">
+<link href="ch-cap_2.html#s-sec_2_1_2" rel="subsection" title="3.2.2 Eigenvalue calculation code <code>en_U3_mh</code>">
+<link href="ch-cap_2.html#s-sec_2_1_2_1" rel="subsection" title="3.2.2.1 Input Files and Program Execution">
+<link href="ch-cap_2.html#s-sec_2_1_2_2" rel="subsection" title="3.2.2.2 Examples">
+<link href="ch-cap_2.html#s-sec_2_1_3" rel="subsection" title="3.2.3 Eigenvalue calculation code <code>en_U3_mh_trid</code>">
+<link href="ch-cap_2.html#s-sec_2_1_3_1" rel="subsection" title="3.2.3.1 Input Files and Program Execution">
+<link href="ch-cap_2.html#s-sec_2_1_3_2" rel="subsection" title="3.2.3.2 Examples">
+<link href="ch-cap_2.html#s-sec_2_2_1" rel="subsection" title="3.3.1 Input Files and Program Execution">
+<link href="ch-cap_2.html#s-sec_2_2_2" rel="subsection" title="3.3.2 Examples">
+<link href="ch-cap_2.html#s-sec_avec_mh" rel="subsection" title="3.3.3 Eigenvector calculation code <code>avec_U3_mh</code>">
+<link href="ch-cap_2.html#s-sec_avec_mh_1" rel="subsection" title="3.3.3.1 Input Files and Program Execution">
+<link href="ch-cap_2.html#s-sec_avec_mh_2" rel="subsection" title="3.3.3.2 Examples">
+<link href="ch-cap_2.html#s-sec_2_3_0" rel="subsection" title="3.4.1 Expectation value of the number of tau bosons operator">
+<link href="ch-cap_2.html#s-sec_2_3_1" rel="subsection" title="3.4.2 Expectation value of the IR transition operator">
+<link href="ch-cap_2.html#s-sec_2_3_2" rel="subsection" title="3.4.3 Model and General Hamiltonian Eigenvalues">
+<link href="ch-cap_2.html#s-sec_2_3_3" rel="subsection" title="3.4.4 Excitation Energy Diagrams">
+
+</head>
+
+<body>
+
+<p><a name="ch-cap_1"></a></p>
+<hr>
+
+<p>
+[ <a href="ch-cap_0.html">previous</a> ]
+[ <a href="index.html#contents">Contents</a> ]
+[ <a href="ch-cap_0.html">1</a> ]
+[ 2 ]
+[ <a href="ch-cap_2.html">3</a> ]
+[ <a href="ch-cap_ref.html">4</a> ]
+[ <a href="ch-cap_2.html">next</a> ]
+</p>
+
+<hr>
+
+<h1>
+<code>triat_u3</code> User's Guide
+<br>Chapter 2 - Installation guide
+</h1>
+
+<hr>
+
+<p>
+The program files can be found as a <samp>tgz</samp> file
+(<code>triat_U3_2.<var>X</var>.tgz</code>, where <var>X</var> stands for the
+version number).  The first step is to unpack the file:
+</p>
+
+<pre>
+     $ tar xzf triat_U3_2.2.1.tgz 
+     $ ls
+     triat_U3_2.2.1  triat_U3_2.2.1.tgz
+     $ cd triat_U3_2.2.1/
+     triat_U3_2.2.1$ ls
+     bin/  doc/  examples/  NEWS  README  src/
+</pre>
+
+<p>
+The directory structure is the following
+</p>
+<ol type="1" start="1" >
+<li>
+<p>
+<samp>bin</samp>: Executable files.
+</p>
+</li>
+</ol>
+<ol type="1" start="2" >
+<li>
+<p>
+<samp>src</samp>: <code>Fortran</code> source files and compilation
+<code>Makefile</code>.
+</p>
+</li>
+</ol>
+<ol type="1" start="3" >
+<li>
+<p>
+<samp>doc</samp>: Program documentation (this file) in several formats.
+</p>
+</li>
+</ol>
+<ol type="1" start="4" >
+<li>
+<p>
+<samp>examples</samp>: Different directories with examples of application of
+the programs.
+</p>
+<ul>
+<li>
+<p>
+<samp>XCNO</samp>: Program <code>tri_min_T</code>, application to fitting the
+large amplitude bending mode of fulminic acid.
+</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>
+<samp>HCP_A</samp>: Program <code>tri_min_T</code>, application to fitting the
+bending mode of the A excited electronic state of methinophosphide.
+</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>
+<samp>Eigenvalues</samp>: Program <code>en_U3_gen_T</code>, input files and
+examples of eigenvalues calculation.
+</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>
+<samp>Eigenstates</samp>: Program <code>avec_U3_gen_T</code>, input files and
+examples of eigenvalues and eigenstates calculation.
+</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>
+<samp>Observables</samp>: Input files and examples of calculations for several
+observables of interest.
+</p>
+</li>
+</ul>
+</li>
+</ol>
+
+<hr>
+
+<h2><a name="s-sec_1_1"></a>2.1 Program compilation</h2>
+
+<p>
+The present section details the programs compilation procedure.  There is also
+a version of the program compiled statically in the <samp>bin</samp> directory
+(files ending with the suffix <code>stat</code>).  If you run into trouble
+during any program compilation you can move forward to <a
+href="ch-cap_2.html">Getting Started, Chapter 3</a> using the provided static
+version of the programs.
+</p>
+
+<p>
+The program compilation in <code>Debian</code> systems should be quite smooth
+if the libraries <code>BLAS</code> and <code>LAPACK</code> are installed.
+</p>
+
+<p>
+These libraries are <code>FORTRAN</code> libraries for numerical linear algebra
+and can be found in most Linux Distributions.  In the <code>Debian (Lenny or
+Squeeze)</code> distribution they are associated with packages
+<code>libblas-dev</code> and <code>liblapack-dev</code> or other
+(<code>atlas</code> library).  IMHO, the best option is to install the
+<code>atlas</code> package.  More information about <code>BLAS</code> and
+<code>LAPACK</code> can be found in the <code><a
+href="http://www.netlib.org">Netlib</a></code> website.  &lt;-- Compiled with
+minuit subroutine
+</p>
+
+<p>
+The third library (only needed for the minimization program) is part of the
+CERN scientific routines, providing the <code>Minuit</code> minimization tool
+(See <a href="ch-cap_ref.html">References, Chapter 4</a>).  This library in
+<code>Debian</code> can be installed with the packages
+<code>libpacklib1-dev</code> and <code>libkernlib1-dev</code>, though it is
+safer to install the <code>cernlib-base-dev</code> package.  --&gt;
+</p>
+
+<p>
+Once the libraries are installed the compilation is quite direct.
+</p>
+
+<pre>
+     triat_U3_2.2.1$ cd src
+     triat_U3_2.2.1/src$ ls
+     assign_gen.f           enrgy_modelH_U3_tri.o  minuit-cern.f
+     avalavec_gen_U3.f      fcn_sub_gen.f          minuit_u3.f
+     avalavec_modelH_U3.f   hbldu3_gen.f           readenerg_gfort.f
+     change_basis.f         hbldu3_modelH.f        scaleh_gen.f
+     check_phase.f          hbldu3_modelH_tri.f    selectvl.f
+     chisqre_u3_min_gen.f   hbldu3_modelH_tri.o    so3casimirW2.f
+     cpexp.f                intrac.f90             so3casimirW2WB2.f
+     disdata.f              ir_intensity.f90       so3casimirW4.f
+     enrgy_gen_U3.f         Makefile
+     enrgy_modelH_U3_tri.f  maxc.f
+</pre>
+
+<p>
+As can be seen in the directory <code>Makefile</code>, if the compilation is
+successful, the executable files are located under the
+<code>triat_U3_2.2.1/bin</code> directory.
+</p>
+
+<p>
+List of executable files:
+</p>
+<ol type="1" start="1" >
+<li>
+<p>
+<code>tri_min_T</code>: Optimization code.  Look for the best fit to a set of
+experimental data.
+</p>
+</li>
+</ol>
+<ol type="1" start="2" >
+<li>
+<p>
+<code>en_U3_gen_T</code>: Compute general Hamiltonian eigenvalues given a set
+of parameters.
+</p>
+</li>
+</ol>
+<ol type="1" start="3" >
+<li>
+<p>
+<code>avec_U3_gen_T</code>: Compute general Hamiltonian eigenvalues and
+eigenstates given a set of parameters.
+</p>
+</li>
+</ol>
+<ol type="1" start="4" >
+<li>
+<p>
+<code>en_U3_mh</code>: Compute simplified model Hamiltonian eigenvalues given a
+set of parameters.
+</p>
+</li>
+</ol>
+<ol type="1" start="5" >
+<li>
+<p>
+<code>avec_U3_mh</code>: Compute simplified model Hamiltonian eigenvalues and
+eigenstates given a set of parameters.
+</p>
+</li>
+</ol>
+<ol type="1" start="6" >
+<li>
+<p>
+<code>minuit_U3_genH</code>: Perl script to launch the minimization program.
+Help on this script can be obtained executing <samp>minuit_U3_genH -h</samp>.
+</p>
+</li>
+</ol>
+<ol type="1" start="7" >
+<li>
+<p>
+<code>expected_val_n</code>: Perl script to compute the expectation value of
+the number of tau boson.  Help on this script can be obtained executing
+<samp>expected_val_n -h</samp>.
+</p>
+</li>
+</ol>
+<ol type="1" start="8" >
+<li>
+<p>
+<code>intensity_IR</code>: Perl script to compute the squared expectation value
+of the infrared transition operator.  Help on this script can be obtained
+executing <samp>intensity_IR -h</samp>.
+</p>
+</li>
+</ol>
+
+<p>
+There are also sections in the <code>Makefile</code> (named
+<samp>triat_min_Tstat</samp>, <samp>energenh_Tstat</samp>, and
+<samp>avecgenh_Tstat</samp>, etc.), not included in the <samp>all</samp> label,
+used to compile a static version of the programs.  In case you want compile the
+program statically, type, for example, <samp>make triat_min_Tstat</samp>.
+Please, notice that in this case it is convenient to make a backup of the
+provided statically linked programs (<code>tri_min_Tstat</code> and
+<code>en_U3_gen_Tstat</code>) because you will delete them.  If you need to
+compile all the static versions available then run <samp>make stats</samp>.
+</p>
+
+<p>
+If the programs works correctly in your system you can also, running as
+<em>root</em> user, install them, by default under the directory
+<code>/usr/local/bin</code>.  The associated Perl scripts will also be
+installed in this directory.  The programs are installed in this directory with
+a suffix indicating the version installed and symbolic links to the original
+name are also built.  It is very convenient to add to the default
+<samp>$PATH</samp> variable the <code>/usr/local/bin</code> in case it is not
+yet in it.  This greatly facilitates the minimization program's execution
+instructions explained in <a href="ch-cap_2.html#s-sec_2_0_1_4">Program
+Execution, Section 3.1.1.4</a> and <a
+href="ch-cap_2.html#s-sec_2_0_2">Examples, Section 3.1.2</a>, because in this
+case the explicit paths provided are not necessary.  In order to install it you
+should do it as superuser or using <code>sudo</code>
+</p>
+
+<pre>
+     triat_U3_2.2.1/src$ sudo make install
+     [sudo] password for sudouser: 
+     triat_U3_2.2.1/src$ ls  /usr/local/bin/
+     ...
+     avec_U3_gen_T
+     avec_U3_gen_T_2.2.1
+     avec_U3_gen_Tstat
+     avec_U3_gen_Tstat_2.2.1
+     avec_U3_mh           
+     avec_U3_mh_2.2.1
+     ...
+</pre>
+
+<p>
+If you want to remove these files you can also do it executing <samp>sudo make
+uninstall</samp>.
+</p>
+
+<hr>
+
+<p>
+[ <a href="ch-cap_0.html">previous</a> ]
+[ <a href="index.html#contents">Contents</a> ]
+[ <a href="ch-cap_0.html">1</a> ]
+[ 2 ]
+[ <a href="ch-cap_2.html">3</a> ]
+[ <a href="ch-cap_ref.html">4</a> ]
+[ <a href="ch-cap_2.html">next</a> ]
+</p>
+
+<hr>
+
+<p>
+<code>triat_u3</code> User's Guide
+</p>
+
+<address>
+Version 2.2.1<br>
+<br>
+Curro Perez Bernal <code><a href="mailto:francisco.perez@dfaie.uhu.es">francisco.perez@dfaie.uhu.es</a></code><br>
+<br>
+</address>
+<hr>
+
+</body>
+
+</html>
+
